@@ -10,6 +10,7 @@ import {
   Sparkles,
   BookOpen,
 } from "lucide-react";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { POEMS } from "@/lib/poems";
 
@@ -154,7 +155,26 @@ export default function Home() {
           <Sparkles className="size-3.5 text-primary" />
           Sufi
         </span>
-        <span suppressHydrationWarning>{today}</span>
+        <div className="flex items-center gap-4">
+          <span suppressHydrationWarning className="hidden sm:inline">
+            {today}
+          </span>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="tracking-[0.2em] text-primary uppercase transition hover:text-primary/80">
+                Sign in
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="rounded-full border border-primary/50 bg-primary/10 px-3 py-1.5 tracking-[0.2em] text-primary uppercase transition hover:bg-primary/20">
+                Sign up
+              </button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
+        </div>
       </header>
 
       <section className="mt-10 flex w-full max-w-2xl flex-1 flex-col sm:mt-14">
