@@ -1,0 +1,190 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Palette: candlelit night — warm dark brown ground, gold + saffron ── */
+:root {
+  color-scheme: dark;
+  --radius: 1rem;
+
+  --background: oklch(0.17 0.022 55);
+  --foreground: oklch(0.92 0.04 78);
+  --card: oklch(0.22 0.03 52);
+  --card-foreground: oklch(0.92 0.04 78);
+  --popover: oklch(0.22 0.03 52);
+  --popover-foreground: oklch(0.92 0.04 78);
+  --primary: oklch(0.79 0.13 72); /* warm gold */
+  --primary-foreground: oklch(0.2 0.03 55);
+  --secondary: oklch(0.27 0.03 55);
+  --secondary-foreground: oklch(0.92 0.04 78);
+  --muted: oklch(0.27 0.03 55);
+  --muted-foreground: oklch(0.84 0.05 78);
+  --accent: oklch(0.62 0.15 45); /* saffron */
+  --accent-foreground: oklch(0.97 0.02 80);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.8 0.12 72 / 18%);
+  --input: oklch(0.8 0.12 72 / 16%);
+  --ring: oklch(0.79 0.13 72);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  /* Warm vignette — a candle in a dark room. */
+  background-color: oklch(0.13 0.018 50);
+  background-image:
+    radial-gradient(
+      ellipse 90% 70% at 50% -5%,
+      oklch(0.34 0.08 60 / 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 110% 80% at 50% 110%,
+      oklch(0.3 0.09 40 / 0.45),
+      transparent 60%
+    ),
+    oklch(0.13 0.018 50);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── The verse card ──────────────────────────────────────────────────── */
+.verse-card {
+  border: 1px solid oklch(0.8 0.12 72 / 0.22);
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      oklch(0.36 0.06 60 / 0.35),
+      transparent 70%
+    ),
+    linear-gradient(180deg, oklch(0.24 0.04 55 / 0.5), oklch(0.18 0.03 50 / 0.5));
+  box-shadow:
+    inset 0 1px 0 oklch(0.95 0.05 80 / 0.06),
+    0 40px 80px -40px oklch(0 0 0 / 0.7);
+}
+
+/* ── The verse ───────────────────────────────────────────────────────── */
+.verse {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.5;
+  color: oklch(0.95 0.045 82);
+}
+
+/* Gold rule, fading at both ends, with a small diamond in the middle. */
+.ornament {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary) 50%,
+    transparent
+  );
+  opacity: 0.5;
+}
+
+/* ── The meaning ─────────────────────────────────────────────────────── */
+.meaning {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: oklch(0.96 0.045 82);
+}
+.meaning p {
+  margin: 0 0 0.9em;
+  line-height: 1.7;
+}
+.meaning p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Glowing gold play button ────────────────────────────────────────── */
+.glow-btn {
+  box-shadow:
+    0 0 0 1px oklch(0.79 0.13 72 / 0.4),
+    0 10px 40px -8px oklch(0.79 0.13 72 / 0.65);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.shimmer {
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── shadcn token → utility mapping (Button, Card, etc.) ─────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-heading: var(--font-serif);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
