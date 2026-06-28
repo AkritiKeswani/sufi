@@ -19,19 +19,35 @@ export async function POST(request: Request) {
     );
   }
 
-  let id: unknown;
+  let body: { id?: unknown; text?: unknown };
   try {
-    ({ id } = await request.json());
+    body = await request.json();
   } catch {
     return NextResponse.json({ error: "Malformed request." }, { status: 400 });
   }
 
-  const poem = typeof id === "string" ? getPoem(id) : undefined;
-  if (!poem) {
-    return NextResponse.json({ error: "Unknown poem." }, { status: 400 });
+  // Two modes: a known curated poem (by id), or freshly generated verse passed
+  // as raw text (e.g. a Gemini-composed shayari). Raw text is length-capped so
+  // the endpoint can't be turned into an open-ended TTS service.
+  let spoken: string;
+  if (typeof body.id === "string") {
+    const poem = getPoem(body.id);
+    if (!poem) {
+      return NextResponse.json({ error: "Unknown poem." }, { status: 400 });
+    }
+    spoken = `${poem.text}\n\n— ${poem.author}`;
+  } else if (typeof body.text === "string" && body.text.trim()) {
+    const text = body.text.trim();
+    if (text.length > 800) {
+      return NextResponse.json(
+        { error: "That verse is too long to recite." },
+        { status: 400 },
+      );
+    }
+    spoken = text;
+  } else {
+    return NextResponse.json({ error: "Nothing to recite." }, { status: 400 });
   }
-
-  const spoken = `${poem.text}\n\n— ${poem.author}`;
 
   try {
     const res = await fetch(

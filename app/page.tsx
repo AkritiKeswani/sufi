@@ -9,6 +9,7 @@ import {
   Loader2,
   Sparkles,
   BookOpen,
+  Wand2,
 } from "lucide-react";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,13 @@ function dayIndex(): number {
   return ((days % n) + n) % n;
 }
 
+// A fresh shayari composed by Gemini, held client-side (no id in POEMS).
+type Generated = {
+  urdu: string;
+  transliteration: string;
+  meaning: string;
+};
+
 export default function Home() {
   const [index, setIndex] = useState(() => dayIndex());
   const [today, setToday] = useState("");
@@ -34,6 +42,12 @@ export default function Home() {
   const [playing, setPlaying] = useState(false);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [audioError, setAudioError] = useState("");
+
+  // A Gemini-composed shayari overrides the curated verse when present.
+  const [generated, setGenerated] = useState<Generated | null>(null);
+  const [genLoading, setGenLoading] = useState(false);
+  const [genError, setGenError] = useState("");
+  const [genKey, setGenKey] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCache = useRef<Map<string, string>>(new Map());
@@ -62,11 +76,41 @@ export default function Home() {
 
   function goTo(delta: number) {
     stopAudio();
+    setGenerated(null);
+    setGenError("");
     setMeaningOpen(false);
     setMeaning([]);
     setMeaningError("");
     setAudioError("");
     setIndex((i) => ((i + delta) % POEMS.length + POEMS.length) % POEMS.length);
+  }
+
+  // Ask Gemini for a brand-new Urdu shayari (with its meaning) on the fly.
+  async function compose() {
+    stopAudio();
+    setGenError("");
+    setMeaningOpen(false);
+    setMeaning([]);
+    setMeaningError("");
+    setAudioError("");
+    setGenLoading(true);
+    try {
+      const res = await fetch("/api/generate", { method: "POST" });
+      const data = (await res.json()) as Partial<Generated> & { error?: string };
+      if (!res.ok || !data.urdu) {
+        throw new Error(data.error ?? "Could not compose a new shayari.");
+      }
+      setGenerated({
+        urdu: data.urdu,
+        transliteration: data.transliteration ?? "",
+        meaning: data.meaning ?? "",
+      });
+      setGenKey((k) => k + 1);
+    } catch (err) {
+      setGenError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setGenLoading(false);
+    }
   }
 
   async function toggleMeaning() {
@@ -76,6 +120,16 @@ export default function Home() {
     }
     setMeaningOpen(true);
     setMeaningError("");
+
+    // Generated shayari already carry their meaning — no round-trip needed.
+    if (generated) {
+      const parts = generated.meaning
+        .split(/\n\s*\n/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+      setMeaning(parts.length ? parts : [generated.meaning]);
+      return;
+    }
 
     const cached = meaningCache.current.get(poem.id);
     if (cached) {
@@ -116,20 +170,23 @@ export default function Home() {
       return;
     }
     try {
-      let url = audioCache.current.get(poem.id);
+      const cacheKey = generated ? `gen:${generated.urdu}` : poem.id;
+      let url = audioCache.current.get(cacheKey);
       if (!url) {
         setLoadingAudio(true);
         const res = await fetch("/api/recite", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: poem.id }),
+          body: JSON.stringify(
+            generated ? { text: generated.urdu } : { id: poem.id },
+          ),
         });
         const data = (await res.json()) as { audio?: string; error?: string };
         if (!res.ok || !data.audio) {
           throw new Error(data.error ?? "Unable to recite this verse.");
         }
         url = data.audio;
-        audioCache.current.set(poem.id, url);
+        audioCache.current.set(cacheKey, url);
       }
       const audio = audioRef.current ?? new Audio();
       audioRef.current = audio;
@@ -180,18 +237,42 @@ export default function Home() {
       <section className="mt-10 flex w-full max-w-2xl flex-1 flex-col sm:mt-14">
         {/* ── The verse card ────────────────────────────────────────── */}
         <article
-          key={poem.id}
+          key={generated ? `gen-${genKey}` : poem.id}
           className="verse-card animate-fade-up px-7 py-12 sm:px-14 sm:py-16"
         >
           <div className="ornament mx-auto w-24" />
 
-          <blockquote className="verse mt-10 text-center text-[1.75rem] leading-[1.45] whitespace-pre-line sm:text-[2.15rem]">
-            {poem.text}
-          </blockquote>
+          {generated ? (
+            <>
+              <blockquote
+                dir="rtl"
+                lang="ur"
+                className="verse-urdu mt-10 text-center text-[1.9rem] whitespace-pre-line sm:text-[2.4rem]"
+              >
+                {generated.urdu}
+              </blockquote>
 
-          <p className="mt-8 text-center text-xs tracking-[0.35em] text-primary uppercase">
-            — {poem.author}
-          </p>
+              {generated.transliteration && (
+                <p className="translit mt-7 text-center text-lg whitespace-pre-line sm:text-xl">
+                  {generated.transliteration}
+                </p>
+              )}
+
+              <p className="mt-8 text-center text-xs tracking-[0.35em] text-primary uppercase">
+                Composed just now
+              </p>
+            </>
+          ) : (
+            <>
+              <blockquote className="verse mt-10 text-center text-[1.75rem] leading-[1.45] whitespace-pre-line sm:text-[2.15rem]">
+                {poem.text}
+              </blockquote>
+
+              <p className="mt-8 text-center text-xs tracking-[0.35em] text-primary uppercase">
+                — {poem.author}
+              </p>
+            </>
+          )}
 
           <div className="ornament mx-auto mt-10 w-24" />
 
@@ -281,10 +362,35 @@ export default function Home() {
           </p>
         )}
 
+        {/* ── Compose a fresh Urdu shayari with Gemini ───────────────────── */}
+        <div className="mt-7 flex justify-center">
+          <Button
+            onClick={compose}
+            disabled={genLoading}
+            variant="ghost"
+            className="gap-2 rounded-full px-5 text-xs tracking-[0.2em] text-primary uppercase hover:bg-primary/10 hover:text-primary"
+          >
+            {genLoading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Wand2 className="size-4" />
+            )}
+            {genLoading ? "Composing" : "Compose a new shayari"}
+          </Button>
+        </div>
+
+        {genError && (
+          <p className="mt-3 text-center text-sm text-[#e7a98f] italic">
+            {genError}
+          </p>
+        )}
+
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          {isToday
-            ? "Today's verse — return tomorrow for a new one."
-            : "Wandering the archive · use the arrows to keep exploring"}
+          {generated
+            ? "A shayari composed just for you · use the arrows to return to the archive"
+            : isToday
+              ? "Today's verse — return tomorrow for a new one."
+              : "Wandering the archive · use the arrows to keep exploring"}
         </p>
       </section>
     </main>

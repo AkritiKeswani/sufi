@@ -7,6 +7,7 @@
 @theme {
   --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", serif;
 }
 
 /* ── Palette: candlelit night — warm dark brown ground, gold + saffron ── */
@@ -85,6 +86,24 @@ body {
   letter-spacing: 0.005em;
   line-height: 1.5;
   color: oklch(0.95 0.045 82);
+}
+
+/* ── AI-composed Urdu shayari (Nastaliq, right-to-left) ──────────────────── */
+.verse-urdu {
+  font-family: var(--font-urdu);
+  font-weight: 500;
+  /* Nastaliq needs generous leading so the sloping baselines don't collide. */
+  line-height: 2.5;
+  color: oklch(0.95 0.045 82);
+}
+
+/* The Roman-Urdu transliteration sits quietly beneath the script. */
+.translit {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.6;
+  color: oklch(0.86 0.05 80 / 0.85);
 }
 
 /* Gold rule, fading at both ends, with a small diamond in the middle. */
