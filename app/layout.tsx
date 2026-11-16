@@ -20,7 +20,7 @@ const inter = Inter({
   display: "swap",
 });
 
-// Noto Nastaliq Urdu — for AI-composed shayari rendered in Urdu script.
+// Noto Nastaliq Urdu — shayari and vocabulary in Urdu script.
 const nastaliq = Noto_Nastaliq_Urdu({
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
@@ -29,9 +29,9 @@ const nastaliq = Noto_Nastaliq_Urdu({
 });
 
 export const metadata: Metadata = {
-  title: "Sufi — A verse a day",
+  title: "Sufi — Learn the art of shayari",
   description:
-    "A verse a day from Rumi, Faiz Ahmad Faiz, Bulleh Shah, and Javed Akhtar. Reveal its meaning, or listen as it's recited aloud.",
+    "Scroll through shayari and listen as each verse is recited, then learn the Urdu the poets write in, word by word.",
 };
 
 export default function RootLayout({
@@ -43,6 +43,7 @@ export default function RootLayout({
         <body
           className={`${cormorant.variable} ${inter.variable} ${nastaliq.variable} font-sans`}
         >
+          <div aria-hidden className="dervish-bg" />
           {children}
         </body>
       </html>

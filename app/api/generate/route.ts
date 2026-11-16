@@ -4,7 +4,46 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = "gemini-2.5-flash";
+const API = "https://generativelanguage.googleapis.com/v1beta";
+
+// Google retires models often (they 404 once gone), so we don't pin one.
+// GEMINI_MODEL is tried first if set; otherwise we discover the plain
+// "gemini-X.Y-flash" models this key can see and try them newest-first,
+// falling through on 404. The model that works is remembered per server.
+const PREFERRED = [process.env.GEMINI_MODEL, "gemini-3.8-flash"].filter(
+  (m): m is string => !!m,
+);
+const MAX_ATTEMPTS = 6;
+let workingModel: string | undefined;
+
+async function candidateModels(apiKey: string): Promise<string[]> {
+  const discovered: string[] = [];
+  try {
+    const res = await fetch(`${API}/models?pageSize=1000&key=${apiKey}`);
+    if (res.ok) {
+      const data = await res.json();
+      for (const m of data?.models ?? []) {
+        const name = String(m?.name ?? "").replace(/^models\//, "");
+        if (
+          /^gemini-\d+(\.\d+)?-flash$/.test(name) &&
+          m?.supportedGenerationMethods?.includes("generateContent")
+        ) {
+          discovered.push(name);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Could not list Gemini models:", error);
+  }
+  const version = (name: string) => parseFloat(name.split("-")[1]);
+  discovered.sort((a, b) => version(b) - version(a));
+
+  return [
+    ...new Set([workingModel, ...PREFERRED, ...discovered].filter(
+      (m): m is string => !!m,
+    )),
+  ].slice(0, MAX_ATTEMPTS);
+}
 
 const SYSTEM_PROMPT = `You are a master Urdu poet in the classical ghazal and shayari tradition — steeped in Ghalib, Mir, Faiz, and Parveen Shakir. You compose original, evocative shayari with authentic Urdu idiom and imagery: ishq and hijr, the divine beloved, the tavern and the moth, longing, intoxication, and quiet defiance. Your verse is genuine and fresh — never clichéd, never a translation of a famous line. You write tasteful, beautiful poetry suitable for all readers.`;
 
@@ -44,32 +83,48 @@ Return:
 
 Make it fresh and genuine — not a known couplet.`;
 
+  const body = JSON.stringify({
+    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+    generationConfig: {
+      temperature: 1.15,
+      topP: 0.95,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "object",
+        properties: {
+          urdu: { type: "string" },
+          transliteration: { type: "string" },
+          meaning: { type: "string" },
+        },
+        required: ["urdu", "transliteration", "meaning"],
+      },
+    },
+  });
+
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-      {
+    let res: Response | undefined;
+    for (const model of await candidateModels(apiKey)) {
+      res = await fetch(`${API}/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-          generationConfig: {
-            temperature: 1.15,
-            topP: 0.95,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "object",
-              properties: {
-                urdu: { type: "string" },
-                transliteration: { type: "string" },
-                meaning: { type: "string" },
-              },
-              required: ["urdu", "transliteration", "meaning"],
-            },
-          },
-        }),
-      },
-    );
+        body,
+      });
+      // 404: retired. 429/500/503: out of quota or overloaded. Try the next.
+      if (![404, 429, 500, 503].includes(res.status)) {
+        if (res.ok) workingModel = model;
+        break;
+      }
+      console.warn(`Gemini model ${model} unavailable (${res.status}), trying next.`);
+      if (model === workingModel) workingModel = undefined;
+    }
+
+    if (!res) {
+      return NextResponse.json(
+        { error: "No Gemini model is available right now." },
+        { status: 502 },
+      );
+    }
 
     if (!res.ok) {
       const raw = await res.text().catch(() => "");

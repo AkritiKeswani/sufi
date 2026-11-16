@@ -132,6 +132,17 @@ body {
   margin-bottom: 0;
 }
 
+/* ── Floating control bar ────────────────────────────────────────────
+   Sticks to the bottom of the viewport while a long kafi scrolls past
+   underneath, so the controls are always within reach. */
+.control-bar {
+  border: 1px solid oklch(0.8 0.12 72 / 0.14);
+  background: oklch(0.17 0.025 52 / 0.72);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow: 0 24px 50px -24px oklch(0 0 0 / 0.8);
+}
+
 /* ── Glowing gold play button ────────────────────────────────────────── */
 .glow-btn {
   box-shadow:
@@ -206,4 +217,128 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+/* ── Shayari feed: one verse per screen ──────────────────────────────── */
+.feed {
+  scrollbar-width: none;
+  overscroll-behavior-y: contain;
+}
+.feed::-webkit-scrollbar {
+  display: none;
+}
+.feed-header {
+  background: linear-gradient(
+    180deg,
+    oklch(0.13 0.018 50 / 0.92),
+    oklch(0.13 0.018 50 / 0)
+  );
+}
+@media (prefers-reduced-motion: no-preference) {
+  .feed {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ── Home: the two doors ─────────────────────────────────────────────── */
+.door {
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+.door:hover,
+.door:focus-visible {
+  border-color: oklch(0.8 0.12 72 / 0.6);
+  transform: translateY(-3px);
+}
+
+/* ── Learn Urdu ──────────────────────────────────────────────────────── */
+.word-card {
+  border-radius: 1.25rem;
+}
+.word-card .verse-urdu {
+  line-height: 2.1;
+}
+
+.pill {
+  border: 1px solid oklch(0.8 0.12 72 / 0.25);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.pill:hover {
+  color: var(--primary);
+  border-color: oklch(0.8 0.12 72 / 0.55);
+}
+.pill-on {
+  background: oklch(0.79 0.13 72 / 0.14);
+  border-color: oklch(0.8 0.12 72 / 0.6);
+  color: var(--primary);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid oklch(0.8 0.12 72 / 0.25);
+  border-radius: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--foreground);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+.option:not(:disabled):hover {
+  background: oklch(0.79 0.13 72 / 0.1);
+  border-color: oklch(0.8 0.12 72 / 0.55);
+}
+.option:disabled {
+  opacity: 0.6;
+}
+.option-right:disabled {
+  opacity: 1;
+  border-color: oklch(0.75 0.14 150);
+  background: oklch(0.75 0.14 150 / 0.14);
+}
+.option-wrong:disabled {
+  opacity: 1;
+  border-color: oklch(0.68 0.16 30);
+  background: oklch(0.68 0.16 30 / 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .shimmer,
+  .door {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ── The whirling dervish behind everything ──────────────────────────── */
+.dervish-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/dervish.svg") center 55% / auto 92vh no-repeat;
+  opacity: 0.1;
+}
+/* On the home page the figure is the point; elsewhere it stays a watermark. */
+body:has(.home) .dervish-bg {
+  opacity: 0.38;
+}
+.home .verse-card {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
