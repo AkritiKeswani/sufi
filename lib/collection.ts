@@ -1,9 +1,8 @@
 "use client";
 
 // The signed-in user's collection — saved shayari, saved words and their own
-// writings — stored in Supabase. Requests go straight to Supabase's REST API
-// with the user's Clerk session token; Row Level Security (supabase/schema.sql)
-// keeps every user to their own rows.
+// writings — stored in Supabase via the app's own /api/collection route, which
+// checks the Clerk sign-in and scopes every read and write to that user.
 import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 
@@ -24,9 +23,8 @@ type State = {
   error?: string;
 };
 
-const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-export const savingConfigured = !!(URL_ && KEY);
+// Saving needs Supabase; the server route reports if its secret key is missing.
+export const savingConfigured = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 // One shared store, so every page and the header agree.
 let state: State = { status: "idle", userId: null, favorites: new Set(), writings: [] };
@@ -43,41 +41,23 @@ const SERVER_STATE: State = state;
 
 const favKey = (kind: Kind, id: string) => `${kind}:${id}`;
 
-async function rest(
-  token: string,
-  path: string,
-  init: RequestInit & { prefer?: string } = {},
-) {
-  const res = await fetch(`${URL_}/rest/v1/${path}`, {
-    ...init,
-    headers: {
-      apikey: KEY!,
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      ...(init.prefer ? { Prefer: init.prefer } : {}),
-    },
+async function api(body?: Record<string, unknown>) {
+  const res = await fetch("/api/collection", {
+    method: body ? "POST" : "GET",
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
   });
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    console.error("Supabase error:", res.status, detail);
-    throw new Error(
-      res.status === 401 || res.status === 403
-        ? "Saving isn't connected yet (Supabase rejected the sign-in)."
-        : "Couldn't save just now. Please try again.",
-    );
+    console.error("Collection error:", res.status, data?.error);
+    throw new Error(data?.error ?? "Couldn't save just now. Please try again.");
   }
-  return res.status === 204 ? null : res.json();
+  return data;
 }
 
 export function useCollection() {
-  const { isLoaded, isSignedIn, userId, getToken } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useAuth();
   const snap = useSyncExternalStore(subscribe, () => state, () => SERVER_STATE);
-
-  const token = useCallback(async () => {
-    const t = await getToken();
-    if (!t) throw new Error("Please sign in again.");
-    return t;
-  }, [getToken]);
 
   // Load once per signed-in user; clear on sign-out.
   useEffect(() => {
@@ -90,11 +70,7 @@ export function useCollection() {
     set({ status: "loading", userId, error: undefined });
     (async () => {
       try {
-        const t = await token();
-        const [favs, writings] = await Promise.all([
-          rest(t, "favorites?select=kind,item_id"),
-          rest(t, "writings?select=*&order=created_at.desc"),
-        ]);
+        const { favorites: favs, writings } = await api();
         set({
           status: "ready",
           favorites: new Set(
@@ -106,7 +82,7 @@ export function useCollection() {
         set({ status: "error", error: err instanceof Error ? err.message : String(err) });
       }
     })();
-  }, [isLoaded, isSignedIn, userId, token]);
+  }, [isLoaded, isSignedIn, userId]);
 
   const isFavorite = useCallback(
     (kind: Kind, id: string) => snap.favorites.has(favKey(kind, id)),
@@ -123,18 +99,7 @@ export function useCollection() {
       else next.add(k);
       set({ favorites: next });
       try {
-        const t = await token();
-        if (had) {
-          await rest(t, `favorites?kind=eq.${kind}&item_id=eq.${encodeURIComponent(id)}`, {
-            method: "DELETE",
-          });
-        } else {
-          await rest(t, "favorites", {
-            method: "POST",
-            body: JSON.stringify({ kind, item_id: id }),
-            prefer: "return=minimal,resolution=ignore-duplicates",
-          });
-        }
+        await api({ action: had ? "unfavorite" : "favorite", kind, id });
       } catch (err) {
         const back = new Set(state.favorites);
         if (had) back.add(k);
@@ -143,40 +108,30 @@ export function useCollection() {
         throw err;
       }
     },
-    [token],
+    [],
   );
 
   const saveWriting = useCallback(
     async (draft: { id?: string; title: string; body: string }) => {
-      const t = await token();
-      const fields = { title: draft.title.trim(), body: draft.body.trim() };
-      if (draft.id) {
-        const [row] = (await rest(t, `writings?id=eq.${draft.id}`, {
-          method: "PATCH",
-          body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
-          prefer: "return=representation",
-        })) as Writing[];
-        set({ writings: state.writings.map((w) => (w.id === row.id ? row : w)) });
-        return row;
-      }
-      const [row] = (await rest(t, "writings", {
-        method: "POST",
-        body: JSON.stringify(fields),
-        prefer: "return=representation",
-      })) as Writing[];
-      set({ writings: [row, ...state.writings] });
+      const { writing: row } = (await api({ action: "saveWriting", ...draft })) as {
+        writing: Writing;
+      };
+      set({
+        writings: draft.id
+          ? state.writings.map((w) => (w.id === row.id ? row : w))
+          : [row, ...state.writings],
+      });
       return row;
     },
-    [token],
+    [],
   );
 
   const deleteWriting = useCallback(
     async (id: string) => {
-      const t = await token();
-      await rest(t, `writings?id=eq.${id}`, { method: "DELETE" });
+      await api({ action: "deleteWriting", id });
       set({ writings: state.writings.filter((w) => w.id !== id) });
     },
-    [token],
+    [],
   );
 
   const favoriteIds = useCallback(
