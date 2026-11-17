@@ -24,8 +24,8 @@ function buildUserPrompt(poem: { text: string; author: string; lang: string }): 
 ${translate}In 2–3 sentences, reveal its deeper meaning and the feeling it carries. Return only that short reading as plain prose — no headings, no preamble, no bullet points.`;
 }
 
-// Claude writes the reading; if Claude is unavailable (no key, no credit, a
-// rejected request), Gemini writes it instead so "Meaning" still works.
+// Gemini writes the reading. Claude is used only if MEANING_PROVIDER=claude,
+// with Gemini still as the fallback.
 const CLAUDE_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
   const prompt = buildUserPrompt(poem);
   let explanation = "";
 
-  if (process.env.ANTHROPIC_API_KEY) {
+  if (process.env.MEANING_PROVIDER === "claude" && process.env.ANTHROPIC_API_KEY) {
     try {
       explanation = await readWithClaude(prompt);
     } catch (error) {
