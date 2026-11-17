@@ -31,6 +31,17 @@ const playfair = localFont({
   display: "swap",
 });
 
+// Manrope — navigation and interface text: clean and easy on the eye.
+const manrope = localFont({
+  src: [
+    { path: "./fonts/manrope-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/manrope-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/manrope-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
+  variable: "--font-manrope",
+  display: "swap",
+});
+
 // Noto Nastaliq Urdu — shayari and vocabulary in Urdu script.
 const nastaliq = localFont({
   src: [
@@ -56,7 +67,7 @@ export default function RootLayout({
     <ClerkProvider appearance={{ variables: { colorPrimary: "#c9a464" } }}>
       <html lang="en">
         <body
-          className={`${cormorant.variable} ${playfair.variable} ${nastaliq.variable}`}
+          className={`${cormorant.variable} ${playfair.variable} ${manrope.variable} ${nastaliq.variable}`}
         >
           <div aria-hidden className="site-bg" />
           {children}

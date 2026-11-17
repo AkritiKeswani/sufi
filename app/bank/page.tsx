@@ -33,7 +33,7 @@ export default function Bank() {
 
         <div className="mt-12 text-center">
           <h1 className="display text-4xl text-primary sm:text-5xl">Your Bank</h1>
-          <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
             The verses and words you have kept, and the shayari you have written.
           </p>
         </div>

@@ -51,7 +51,7 @@ export default function Home() {
               <span className="display mt-3 text-xl text-primary sm:mt-6">
                 {door.title}
               </span>
-              <span className="meaning mt-2 flex-1 text-lg leading-snug sm:mt-3 sm:text-xl">
+              <span className="meaning mt-2 flex-1 text-base leading-relaxed sm:mt-3 sm:text-lg">
                 {door.blurb}
               </span>
               <span className="label mt-5 flex items-center justify-between text-muted-foreground sm:mt-8">

@@ -61,7 +61,7 @@ export default function Write() {
 
         <div className="mt-12 text-center">
           <h1 className="display text-4xl text-primary sm:text-5xl">Write</h1>
-          <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
             Write a sher of your own, in Urdu script or Roman letters, and keep it in your Bank.
           </p>
         </div>

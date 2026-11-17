@@ -217,7 +217,7 @@ export default function Shayari() {
                       </p>
                     )}
                     {reading?.text && (
-                      <div className="meaning text-center text-lg">
+                      <div className="meaning text-center text-base">
                         {reading.text.map((para, j) => (
                           <p key={j}>{para}</p>
                         ))}

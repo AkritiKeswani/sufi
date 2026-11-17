@@ -58,7 +58,7 @@ export default function Learn() {
 
         <div className="mt-12 text-center">
           <h1 className="display text-4xl text-primary sm:text-5xl">Become a Shayar</h1>
-          <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
             The words shayari is made of. Tap the speaker, listen, then say
             it aloud.
           </p>
