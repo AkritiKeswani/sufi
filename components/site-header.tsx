@@ -6,17 +6,21 @@ import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 const SECTIONS = [
   { href: "/shayari", label: "Shayari" },
   { href: "/learn", label: "Become a Shayar" },
+  { href: "/write", label: "Write" },
+  { href: "/bank", label: "Bank" },
 ] as const;
 
+type Section = (typeof SECTIONS)[number]["href"];
+
 // Shared chrome: the wordmark (home), the two sections, and Clerk auth.
-export function SiteHeader({ current }: { current?: "/shayari" | "/learn" }) {
+export function SiteHeader({ current }: { current?: Section }) {
   return (
     <header className="label flex w-full items-center justify-between gap-4 text-muted-foreground">
       <Link href="/" className="wordmark text-3xl transition hover:brightness-125">
         Sufi
       </Link>
 
-      <nav className="flex items-center gap-4 sm:gap-6">
+      <nav className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 sm:gap-x-6">
         {SECTIONS.map((s) => (
           <Link
             key={s.href}
