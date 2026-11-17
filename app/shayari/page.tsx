@@ -207,7 +207,7 @@ export default function Shayari() {
                       </p>
                     )}
                     {reading?.loading && (
-                      <p className="shimmer text-center text-xs tracking-[0.2em] text-muted-foreground uppercase">
+                      <p className="shimmer text-center text-muted-foreground">
                         Listening for the meaning
                       </p>
                     )}

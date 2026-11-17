@@ -20,14 +20,14 @@ const cormorant = localFont({
   display: "swap",
 });
 
-// Cinzel — headings and navigation.
-const cinzel = localFont({
+// Playfair Display — headings: an elegant, high-contrast serif.
+const playfair = localFont({
   src: [
-    { path: "./fonts/cinzel-latin-400-normal.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/cinzel-latin-500-normal.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/cinzel-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/playfair-display-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/playfair-display-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/playfair-display-latin-600-normal.woff2", weight: "600", style: "normal" },
   ],
-  variable: "--font-cinzel",
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -56,7 +56,7 @@ export default function RootLayout({
     <ClerkProvider appearance={{ variables: { colorPrimary: "#c9a464" } }}>
       <html lang="en">
         <body
-          className={`${cormorant.variable} ${cinzel.variable} ${nastaliq.variable}`}
+          className={`${cormorant.variable} ${playfair.variable} ${nastaliq.variable}`}
         >
           <div aria-hidden className="site-bg" />
           {children}

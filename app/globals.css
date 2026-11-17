@@ -8,7 +8,7 @@
   --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-sans: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", serif;
-  --font-display: var(--font-cinzel), var(--font-cormorant), ui-serif, serif;
+  --font-display: var(--font-playfair), var(--font-cormorant), ui-serif, serif;
 }
 
 /* ── Palette: candlelit night — warm dark brown ground, gold + saffron ── */
@@ -90,14 +90,15 @@ body {
 .display {
   font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.005em;
   color: oklch(0.93 0.035 85);
 }
-/* Navigation and small labels: Cinzel, small and widely spaced. */
+/* Navigation and small labels: plain upright Cormorant. */
 .label {
-  font-family: var(--font-display);
-  font-size: 0.8125rem;
-  letter-spacing: 0.16em;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 /* "Sufi" — the one non-shayari italic, after the artwork's wordmark. */
 .wordmark {
