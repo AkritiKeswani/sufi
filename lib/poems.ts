@@ -23,7 +23,7 @@ export const POEMS: Poem[] = [
   {
     id: "ghalib-khwahishen",
     urdu: "ہزاروں خواہشیں ایسی کہ ہر خواہش پہ دم نکلے\nبہت نکلے مرے ارمان لیکن پھر بھی کم نکلے",
-    text: "hazāroñ ḳhvāhisheñ aisī ki har ḳhvāhish pe dam nikle\nbahut nikle mire armān lekin phir bhī kam nikle",
+    text: "hazaron khvahishein aisi ki har khvahish pe dam nikle\nbahut nikle mire arman lekin phir bhi kam nikle",
     translation:
       "A thousand desires, each one worth dying for.\nMany of my longings were fulfilled — and still, too few.",
     author: "Mirza Ghalib",
@@ -32,7 +32,7 @@ export const POEMS: Poem[] = [
   {
     id: "ghalib-dil-e-nadan",
     urdu: "دلِ ناداں تجھے ہوا کیا ہے\nآخر اس درد کی دوا کیا ہے",
-    text: "dil-e-nādāñ tujhe huā kyā hai\nāḳhir is dard kī davā kyā hai",
+    text: "dil-e-nadan tujhe hua kya hai\nakhir is dard ki dava kya hai",
     translation:
       "Foolish heart, what has come over you?\nWhat, in the end, is the cure for this ache?",
     author: "Mirza Ghalib",
@@ -41,7 +41,7 @@ export const POEMS: Poem[] = [
   {
     id: "ghalib-nikamma",
     urdu: "عشق نے غالبؔ نکما کر دیا\nورنہ ہم بھی آدمی تھے کام کے",
-    text: "ishq ne Ġhālib nikammā kar diyā\nvarna ham bhī ādmī the kaam ke",
+    text: "ishq ne Ġhalib nikamma kar diya\nvarna ham bhi admi the kaam ke",
     translation:
       "Love has made Ghalib good for nothing —\notherwise I, too, was a man of some use.",
     author: "Mirza Ghalib",
@@ -50,7 +50,7 @@ export const POEMS: Poem[] = [
   {
     id: "ghalib-jannat",
     urdu: "ہم کو معلوم ہے جنت کی حقیقت لیکن\nدل کے خوش رکھنے کو غالبؔ یہ خیال اچھا ہے",
-    text: "ham ko mālūm hai jannat kī haqīqat lekin\ndil ke ḳhush rakhne ko Ġhālib ye ḳhayāl achchhā hai",
+    text: "ham ko malum hai jannat ki haqiqat lekin\ndil ke khush rakhne ko Ġhalib ye khayal achchha hai",
     translation:
       "I know the truth about paradise, but —\nto keep the heart happy, Ghalib, it is a pleasant thought.",
     author: "Mirza Ghalib",
@@ -59,7 +59,7 @@ export const POEMS: Poem[] = [
   {
     id: "ghalib-na-tha-kuchh",
     urdu: "نہ تھا کچھ تو خدا تھا، کچھ نہ ہوتا تو خدا ہوتا\nڈبویا مجھ کو ہونے نے، نہ ہوتا میں تو کیا ہوتا",
-    text: "na thā kuchh to ḳhudā thā, kuchh na hotā to ḳhudā hotā\nḍuboyā mujh ko hone ne, na hotā maiñ to kyā hotā",
+    text: "na tha kuchh to khuda tha, kuchh na hota to khuda hota\nduboya mujh ko hone ne, na hota main to kya hota",
     translation:
       "When there was nothing, there was God; had there been nothing, there would be God.\nIt was existing that drowned me — had I not been, what would I have been?",
     author: "Mirza Ghalib",
@@ -70,7 +70,7 @@ export const POEMS: Poem[] = [
   {
     id: "mir-patta-patta",
     urdu: "پتا پتا بوٹا بوٹا حال ہمارا جانے ہے\nجانے نہ جانے گل ہی نہ جانے باغ تو سارا جانے ہے",
-    text: "pattā pattā būṭā būṭā haal hamārā jaane hai\njaane na jaane gul hī na jaane bāġh to saarā jaane hai",
+    text: "patta patta buta buta haal hamara jaane hai\njaane na jaane gul hi na jaane bagh to saara jaane hai",
     translation:
       "Every leaf, every shrub knows how it is with me.\nOnly the rose does not know — the whole garden knows.",
     author: "Mir Taqi Mir",
@@ -79,7 +79,7 @@ export const POEMS: Poem[] = [
   {
     id: "mir-ibtida",
     urdu: "ابتدائے عشق ہے روتا ہے کیا\nآگے آگے دیکھیے ہوتا ہے کیا",
-    text: "ibtidā-e-ishq hai rotā hai kyā\naage aage dekhiye hotā hai kyā",
+    text: "ibtida-e-ishq hai rota hai kya\naage aage dekhiye hota hai kya",
     translation:
       "This is only love's beginning — why weep already?\nWait and see what lies further on.",
     author: "Mir Taqi Mir",
@@ -90,7 +90,7 @@ export const POEMS: Poem[] = [
   {
     id: "momin-goya",
     urdu: "تم مرے پاس ہوتے ہو گویا\nجب کوئی دوسرا نہیں ہوتا",
-    text: "tum mire paas hote ho goyā\njab koī dūsrā nahīñ hotā",
+    text: "tum mire paas hote ho goya\njab koi dusra nahin hota",
     translation:
       "It is as though you are beside me\nwhenever no one else is.",
     author: "Momin Khan Momin",
@@ -126,25 +126,25 @@ export const POEMS: Poem[] = [
   // ── Faiz Ahmad Faiz ────────────────────────────────────────────────────
   {
     id: "faiz-dukh",
-    text: "aur bhī dukh haiñ zamāne meñ mohabbat ke sivā\nrāhateñ aur bhī haiñ vasl kī rāhat ke sivā",
+    text: "aur bhi dukh hain zamane mein mohabbat ke siva\nrahatein aur bhi hain vasl ki rahat ke siva",
     author: "Faiz Ahmad Faiz",
     lang: "ur",
   },
   {
     id: "faiz-gulon",
-    text: "guloñ meñ rang bhare bād-e-nau-bahār chale\nchale bhī aao ki gulshan kā kārobār chale",
+    text: "gulon mein rang bhare bad-e-nau-bahar chale\nchale bhi aao ki gulshan ka karobar chale",
     author: "Faiz Ahmad Faiz",
     lang: "ur",
   },
   {
     id: "faiz-dil",
-    text: "dil nā-umīd to nahīñ nākām hī to hai\nlambī hai ġham kī shaam magar shaam hī to hai",
+    text: "dil na-umid to nahin nakam hi to hai\nlambi hai gham ki shaam magar shaam hi to hai",
     author: "Faiz Ahmad Faiz",
     lang: "ur",
   },
   {
     id: "faiz-qalam",
-    text: "ham parvarish-e-lauh-o-qalam karte raheñge\njo dil pe guzartī hai raqam karte raheñge",
+    text: "ham parvarish-e-lauh-o-qalam karte raheinge\njo dil pe guzarti hai raqam karte raheinge",
     author: "Faiz Ahmad Faiz",
     lang: "ur",
   },
@@ -152,7 +152,7 @@ export const POEMS: Poem[] = [
   // ── Bulleh Shah ────────────────────────────────────────────────────────
   {
     id: "bulleh-kaun",
-    text: "Na maiñ momin vich masītāñ\nna maiñ vich kufr diyāñ rītāñ\nBulleyā! ki jaanā maiñ kaun",
+    text: "Na main momin vich masitan\nna main vich kufr diyan ritan\nBulleya! ki jaana main kaun",
     author: "Bulleh Shah",
     lang: "pa",
   },
@@ -173,7 +173,7 @@ export const POEMS: Poem[] = [
   },
   {
     id: "bulleh-ishq",
-    text: "Ranjhā Ranjhā kardī ni maiñ\naape Ranjhā hoī",
+    text: "Ranjha Ranjha kardi ni main\naape Ranjha hoi",
     author: "Bulleh Shah",
     lang: "pa",
   },
@@ -181,19 +181,19 @@ export const POEMS: Poem[] = [
   // ── Javed Akhtar ───────────────────────────────────────────────────────
   {
     id: "javed-imarat",
-    text: "ūñchī imāratoñ se makāñ merā ghir gayā\nkuchh log mere hisse kā sūraj bhī khā ga.e",
+    text: "unchi imaraton se makan mera ghir gaya\nkuchh log mere hisse ka suraj bhi kha gaye",
     author: "Javed Akhtar",
     lang: "ur",
   },
   {
     id: "javed-khwab",
-    text: "kabhī jo ḳhvāb thā vo pā liyā hai\nmagar jo kho ga.ī vo chiiz kyā thī",
+    text: "kabhi jo khvab tha vo pa liya hai\nmagar jo kho gayi vo chiiz kya thi",
     author: "Javed Akhtar",
     lang: "ur",
   },
   {
     id: "javed-khuddari",
-    text: "mujhe dushman se bhī ḳhuddārī kī ummīd rahtī hai\nkisī kā bhī ho sar qadmoñ meñ sar achchhā nahīñ lagtā",
+    text: "mujhe dushman se bhi khuddari ki ummid rahti hai\nkisi ka bhi ho sar qadmon mein sar achchha nahin lagta",
     author: "Javed Akhtar",
     lang: "ur",
   },

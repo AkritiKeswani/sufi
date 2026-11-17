@@ -327,9 +327,9 @@ body {
   border: 1px solid oklch(0.8 0.12 72 / 0.25);
   border-radius: 999px;
   padding: 0.5rem 1rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0;
   color: var(--muted-foreground);
   transition:
     background-color 0.2s ease,

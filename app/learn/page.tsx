@@ -4,11 +4,14 @@ import { Loader2, Volume2 } from "lucide-react";
 import { FavoriteButton } from "@/components/favorite-button";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { WORDS, type Word } from "@/lib/words";
+import { useState } from "react";
+import { THEMES, WORDS, type Theme, type Word } from "@/lib/words";
 import { useRecitation } from "@/lib/use-recitation";
 
 export default function Learn() {
   const { activeKey, loadingKey, error, toggle } = useRecitation();
+  const [theme, setTheme] = useState<Theme | "all">("all");
+  const shown = theme === "all" ? WORDS : WORDS.filter((w) => w.theme === theme);
   function speak(word: Word, part: "word" | "example") {
     const text =
       part === "word"
@@ -70,9 +73,28 @@ export default function Learn() {
           </p>
         )}
 
+        {/* ── Categories ───────────────────────────────────────────────── */}
+        <div className="mt-10 flex flex-wrap justify-center gap-2" role="group" aria-label="Categories">
+          {[{ id: "all" as const, urdu: "Sab", label: "All" }, ...THEMES].map((t) => {
+            const count = t.id === "all" ? WORDS.length : WORDS.filter((w) => w.theme === t.id).length;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                aria-pressed={theme === t.id}
+                onClick={() => setTheme(t.id)}
+                className={`pill ${theme === t.id ? "pill-on" : ""}`}
+              >
+                <span className="font-semibold">{t.urdu}</span>
+                <span className="opacity-70"> · {t.label} {count}</span>
+              </button>
+            );
+          })}
+        </div>
+
         {/* ── Word cards ───────────────────────────────────────────────── */}
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {WORDS.map((word) => (
+            {shown.map((word) => (
               <li
                 key={word.id}
                 className="verse-card word-card flex flex-col px-6 py-6"
