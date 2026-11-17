@@ -178,6 +178,30 @@ export const POEMS: Poem[] = [
     lang: "pa",
   },
 
+  {
+    id: "bulleh-masjid",
+    text: "Masjid dha de, mandir dha de\ndha de jo kuchh dhainda\npar kise da dil na dhaavin\nRabb dilan vich rehnda",
+    translation:
+      "Tear down the mosque, tear down the temple,\ntear down whatever can be torn down;\nbut never break anyone's heart,\nfor God lives in hearts.",
+    author: "Bulleh Shah",
+    lang: "pa",
+  },
+  {
+    id: "bulleh-chal",
+    text: "Chal Bulleya hun othe chaliye\njithe saare anne\nna koi saadi zaat pehchaane\nna koi saanu manne",
+    translation:
+      "Come, Bulleh, let us go now\nwhere everyone is blind,\nwhere no one knows our caste\nand no one bows to us.",
+    author: "Bulleh Shah",
+    lang: "pa",
+  },
+  {
+    id: "bulleh-neend",
+    text: "Neend na vekhe bistra\nte bhukh na vekhe maas\nmaut na vekhe umar nu\nte ishq na vekhe zaat",
+    translation:
+      "Sleep doesn't care about the bed,\nhunger doesn't care what the food is,\ndeath doesn't look at age,\nand love doesn't look at caste.",
+    author: "Bulleh Shah",
+    lang: "pa",
+  },
   // ── More classical couplets ───────────────────────────────────────────
   {
     id: "ghalib-raunaq",
