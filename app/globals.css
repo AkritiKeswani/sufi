@@ -6,7 +6,7 @@
 
 @theme {
   --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", serif;
   --font-display: var(--font-cinzel), var(--font-cormorant), ui-serif, serif;
 }

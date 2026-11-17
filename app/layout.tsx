@@ -1,38 +1,44 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Cinzel, Cormorant_Garamond, Inter, Noto_Nastaliq_Urdu } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-// Cormorant Garamond — the verse and meaning (serif, italic).
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+// Fonts ship with the app (app/fonts) rather than being fetched from Google at
+// build time, so a flaky download can never fail a deploy.
+
+// Cormorant Garamond — body text, and the italic shayari and wordmark.
+const cormorant = localFont({
+  src: [
+    { path: "./fonts/cormorant-garamond-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/cormorant-garamond-latin-400-italic.woff2", weight: "400", style: "italic" },
+    { path: "./fonts/cormorant-garamond-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/cormorant-garamond-latin-500-italic.woff2", weight: "500", style: "italic" },
+    { path: "./fonts/cormorant-garamond-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/cormorant-garamond-latin-600-italic.woff2", weight: "600", style: "italic" },
+  ],
   variable: "--font-cormorant",
   display: "swap",
 });
 
-// Cinzel — headings and navigation: a classical, inscription-like serif that
-// sits beside the italic Cormorant wordmark.
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// Cinzel — headings and navigation.
+const cinzel = localFont({
+  src: [
+    { path: "./fonts/cinzel-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/cinzel-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/cinzel-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-cinzel",
   display: "swap",
 });
 
-// Inter — UI chrome (header, labels, buttons).
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
 // Noto Nastaliq Urdu — shayari and vocabulary in Urdu script.
-const nastaliq = Noto_Nastaliq_Urdu({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
+const nastaliq = localFont({
+  src: [
+    { path: "./fonts/noto-nastaliq-urdu-arabic-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/noto-nastaliq-urdu-arabic-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/noto-nastaliq-urdu-arabic-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/noto-nastaliq-urdu-arabic-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-nastaliq",
   display: "swap",
 });
@@ -50,7 +56,7 @@ export default function RootLayout({
     <ClerkProvider appearance={{ variables: { colorPrimary: "#c9a464" } }}>
       <html lang="en">
         <body
-          className={`${cormorant.variable} ${cinzel.variable} ${inter.variable} ${nastaliq.variable}`}
+          className={`${cormorant.variable} ${cinzel.variable} ${nastaliq.variable}`}
         >
           <div aria-hidden className="site-bg" />
           {children}

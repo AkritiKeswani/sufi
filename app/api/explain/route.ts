@@ -24,17 +24,53 @@ function buildUserPrompt(poem: { text: string; author: string; lang: string }): 
 ${translate}In 2–3 sentences, reveal its deeper meaning and the feeling it carries. Return only that short reading as plain prose — no headings, no preamble, no bullet points.`;
 }
 
-export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      {
-        error:
-          "The lamp is unlit: set ANTHROPIC_API_KEY in .env.local to reveal the meaning.",
-      },
-      { status: 500 },
-    );
-  }
+// Claude writes the reading; if Claude is unavailable (no key, no credit, a
+// rejected request), Gemini writes it instead so "Meaning" still works.
+const CLAUDE_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
+async function readWithClaude(prompt: string): Promise<string> {
+  const client = new Anthropic();
+  const message = await client.messages.create({
+    model: CLAUDE_MODEL,
+    max_tokens: 400,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: prompt }],
+  });
+  return message.content
+    .filter((block): block is Anthropic.TextBlock => block.type === "text")
+    .map((block) => block.text)
+    .join("\n")
+    .trim();
+}
+
+async function readWithGemini(prompt: string): Promise<string> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("GEMINI_API_KEY is not set.");
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+    {
+      method: "POST",
+      headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+      }),
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`Gemini ${res.status}: ${await res.text().catch(() => "")}`);
+  }
+  const data = await res.json();
+  return (
+    data?.candidates?.[0]?.content?.parts
+      ?.map((p: { text?: string }) => p?.text ?? "")
+      .join("")
+      .trim() ?? ""
+  );
+}
+
+export async function POST(request: Request) {
   let id: unknown;
   try {
     ({ id } = await request.json());
@@ -47,53 +83,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown poem." }, { status: 400 });
   }
 
-  const client = new Anthropic();
+  const prompt = buildUserPrompt(poem);
+  let explanation = "";
 
-  try {
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 400,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(poem) }],
-    });
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      explanation = await readWithClaude(prompt);
+    } catch (error) {
+      // Log Anthropic's own reason (e.g. low credit, unknown model) so it can
+      // be fixed, then fall back to Gemini.
+      const detail =
+        error instanceof Anthropic.APIError
+          ? `${error.status} ${error.message}`
+          : String(error);
+      console.error(`Claude reading failed (${CLAUDE_MODEL}): ${detail}`);
+    }
+  }
 
-    const explanation = message.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map((block) => block.text)
-      .join("\n")
-      .trim();
+  if (!explanation) {
+    try {
+      explanation = await readWithGemini(prompt);
+    } catch (error) {
+      console.error("Gemini reading failed:", error);
+    }
+  }
 
-    if (!explanation) {
-      return NextResponse.json(
-        { error: "No reading was returned. Please try again." },
-        { status: 502 },
-      );
-    }
-
-    return NextResponse.json({ explanation });
-  } catch (error) {
-    if (error instanceof Anthropic.AuthenticationError) {
-      return NextResponse.json(
-        { error: "The key was not accepted. Check ANTHROPIC_API_KEY." },
-        { status: 401 },
-      );
-    }
-    if (error instanceof Anthropic.RateLimitError) {
-      return NextResponse.json(
-        { error: "The well is busy. Wait a moment and try again." },
-        { status: 429 },
-      );
-    }
-    if (error instanceof Anthropic.APIError) {
-      return NextResponse.json(
-        { error: `The reading faltered (${error.status}). Please try again.` },
-        { status: 502 },
-      );
-    }
-    console.error("Unexpected error generating explanation:", error);
+  if (!explanation) {
     return NextResponse.json(
-      { error: "Something unexpected happened. Please try again." },
-      { status: 500 },
+      { error: "The meaning couldn't be revealed just now. Please try again." },
+      { status: 502 },
     );
   }
+  return NextResponse.json({ explanation });
 }
