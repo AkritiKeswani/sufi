@@ -178,6 +178,80 @@ export const POEMS: Poem[] = [
     lang: "pa",
   },
 
+  // ── More classical couplets ───────────────────────────────────────────
+  {
+    id: "ghalib-raunaq",
+    urdu: "ان کے دیکھے سے جو آ جاتی ہے منہ پر رونق\nوہ سمجھتے ہیں کہ بیمار کا حال اچھا ہے",
+    text: "un ke dekhe se jo aa jaati hai munh par raunaq\nvo samajhte hain ki bimar ka haal achchha hai",
+    translation:
+      "One look from her and colour floods my face;\nso she thinks the patient must be doing well.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-lahu",
+    urdu: "رگوں میں دوڑتے پھرنے کے ہم نہیں قائل\nجب آنکھ ہی سے نہ ٹپکا تو پھر لہو کیا ہے",
+    text: "ragon mein daudte phirne ke ham nahin qaail\njab aankh hi se na tapka to phir lahu kya hai",
+    translation:
+      "I am not convinced by blood that only runs through veins;\nif it never fell from the eye, what kind of blood is that?",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-qudrat",
+    urdu: "وہ آئیں گھر میں ہمارے خدا کی قدرت ہے\nکبھی ہم ان کو کبھی اپنے گھر کو دیکھتے ہیں",
+    text: "vo aaye ghar mein hamare khuda ki qudrat hai\nkabhi ham un ko kabhi apne ghar ko dekhte hain",
+    translation:
+      "That she came to my home is a miracle of God;\nI keep looking at her, then at my home, in wonder.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-haq",
+    urdu: "جان دی دی ہوئی اسی کی تھی\nحق تو یوں ہے کہ حق ادا نہ ہوا",
+    text: "jaan di, di hui usi ki thi\nhaq to yun hai ki haq ada na hua",
+    translation:
+      "I gave my life, but that life was His gift to begin with;\nthe truth is, the debt was never really paid.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "mir-but-kade",
+    urdu: "اب تو جاتے ہیں بت کدے سے میرؔ\nپھر ملیں گے اگر خدا لایا",
+    text: "ab to jaate hain but-kade se 'mir'\nphir milenge agar khuda laaya",
+    translation:
+      "Mir is leaving the temple of idols for now;\nwe'll meet again, if God brings us back.",
+    author: "Mir Taqi Mir",
+    lang: "ur",
+  },
+  {
+    id: "akbar-badnam",
+    urdu: "ہم آہ بھی کرتے ہیں تو ہو جاتے ہیں بدنام\nوہ قتل بھی کرتے ہیں تو چرچا نہیں ہوتا",
+    text: "ham aah bhi karte hain to ho jaate hain badnaam\nvo qatl bhi karte hain to charcha nahin hota",
+    translation:
+      "If I so much as sigh, I am disgraced;\nshe can commit murder and no one says a word.",
+    author: "Akbar Allahabadi",
+    lang: "ur",
+  },
+  {
+    id: "nasikh-zinda-dili",
+    urdu: "زندگی زندہ دلی کا ہے نام\nمردہ دل خاک جیا کرتے ہیں",
+    text: "zindagi zinda-dili ka hai naam\nmurda-dil khaak jiya karte hain",
+    translation:
+      "Life is just another name for a lively heart;\nthose with dead hearts hardly live at all.",
+    author: "Imam Bakhsh Nasikh",
+    lang: "ur",
+  },
+  {
+    id: "bismil-sarfaroshi",
+    urdu: "سرفروشی کی تمنا اب ہمارے دل میں ہے\nدیکھنا ہے زور کتنا بازوئے قاتل میں ہے",
+    text: "sarfaroshi ki tamanna ab hamare dil mein hai\ndekhna hai zor kitna baazu-e-qaatil mein hai",
+    translation:
+      "The longing to give my life now fills my heart;\nlet's see how much strength the killer's arm holds.",
+    author: "Bismil Azimabadi",
+    lang: "ur",
+  },
+
   // ── Javed Akhtar ───────────────────────────────────────────────────────
   {
     id: "javed-imarat",
