@@ -53,24 +53,54 @@ body {
 }
 
 /* ── The gold mandala on black velvet, behind every page ──────────────── */
+/* Two layers: a blurred, darkened copy of the velvet stretched over the whole
+   screen (so wide and tall screens have no visible edge), and the sharp
+   mandala on top, faded softly into it. */
 .site-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: #070605 url("/sufi-bg.jpg") center / auto min(100vh, 100vw)
-    no-repeat;
-  /* Fade the photo's edges into the black so it has no visible border. */
+  overflow: hidden;
+  background: #070605;
+}
+.site-bg::before,
+.site-bg::after {
+  content: "";
+  position: absolute;
+  background-image: url("/sufi-bg.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.site-bg::before {
+  inset: -60px;
+  background-size: cover;
+  filter: blur(36px) brightness(0.55) saturate(0.8);
+}
+.site-bg::after {
+  inset: 0;
+  /* Landscape: the whole mandala fits the screen height. */
+  background-size: auto min(100vh, 100vw);
   -webkit-mask-image: radial-gradient(
-    ellipse 75% 85% at 50% 50%,
-    #000 55%,
+    closest-side circle at 50% 50%,
+    #000 78%,
     transparent 100%
   );
-  mask-image: radial-gradient(ellipse 75% 85% at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(closest-side circle at 50% 50%, #000 78%, transparent 100%);
+  -webkit-mask-size: min(100vh, 100vw) min(100vh, 100vw);
+  mask-size: min(100vh, 100vw) min(100vh, 100vw);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
+/* Portrait phones: let the mandala run a little past the sides, so it frames
+   the verse instead of shrinking to a small circle. */
 @media (orientation: portrait) {
-  .site-bg {
-    background-size: auto min(100vh, 150vw);
+  .site-bg::after {
+    background-size: 135vw auto;
+    -webkit-mask-size: 135vw 135vw;
+    mask-size: 135vw 135vw;
   }
 }
 
