@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPoem } from "@/lib/poems";
 import { getWord } from "@/lib/words";
+import { GeminiTTSError, geminiSpeak, geminiVoiceId } from "@/lib/gemini-tts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,11 +48,28 @@ function synthesize(apiKey: string, { text, model }: Attempt) {
   );
 }
 
+// How the Gemini voice should deliver each kind of text. Without this the
+// model picks an accent per request, and English verse drifts American.
+const ACCENT = "with a soft Pakistani accent";
+const STYLE = {
+  en: `Recite warmly in English ${ACCENT}, at a natural pace.`,
+  ur: `Recite warmly in Urdu ${ACCENT}, at a natural pace.`,
+  pa: `Recite warmly in Punjabi ${ACCENT}, at a natural pace.`,
+  word: `Say this Urdu clearly and naturally ${ACCENT}.`,
+} as const;
+
+// Generated audio, kept for the life of the server: each verse and word is
+// only ever voiced once, and every later play is instant.
+const audioCache = new Map<string, string>();
+
 export async function POST(request: Request) {
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  if (!apiKey) {
+  if (!apiKey && !geminiVoiceId()) {
     return NextResponse.json(
-      { error: "Recitation is not connected: set ELEVENLABS_API_KEY in .env.local." },
+      {
+        error:
+          "Recitation is not connected: set GEMINI_TTS_VOICE_ID (or ELEVENLABS_API_KEY) in .env.local.",
+      },
       { status: 503 },
     );
   }
@@ -66,11 +84,16 @@ export async function POST(request: Request) {
   // The client only ever names a known poem or a known word — never raw text —
   // so this endpoint can't be turned into an open-ended TTS service.
   let attempts: Attempt[];
+  // What the Gemini voice speaks: Urdu script when we have it.
+  let geminiText: string;
+  let geminiStyle: string;
   if (typeof body.id === "string") {
     const poem = getPoem(body.id);
     if (!poem) {
       return NextResponse.json({ error: "Unknown poem." }, { status: 400 });
     }
+    geminiText = poem.urdu ?? poem.text;
+    geminiStyle = STYLE[poem.lang];
     attempts = [{ text: `${poem.text}\n\n— ${poem.author}`, model: VERSE_MODEL }];
   } else if (typeof body.wordId === "string") {
     const word = getWord(body.wordId);
@@ -84,6 +107,8 @@ export async function POST(request: Request) {
     // Urdu script first (when we have it), then the Roman transliteration.
     const script = example ? word.example?.urdu : word.urdu;
     const roman = example ? word.example!.translit : word.translit;
+    geminiText = script ?? roman;
+    geminiStyle = STYLE.word;
     attempts = [
       ...(script ? [{ text: script, model: URDU_MODEL }] : []),
       { text: roman, model: VERSE_MODEL },
@@ -92,10 +117,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Nothing to recite." }, { status: 400 });
   }
 
+  // Your own designed voice, when configured, takes over all recitation.
+  if (geminiVoiceId()) {
+    const cacheKey = JSON.stringify([geminiText, geminiStyle]);
+    const cached = audioCache.get(cacheKey);
+    if (cached) return NextResponse.json({ audio: cached });
+    try {
+      const audio = await geminiSpeak(geminiText, geminiStyle);
+      audioCache.set(cacheKey, audio);
+      return NextResponse.json({ audio });
+    } catch (error) {
+      if (error instanceof GeminiTTSError) {
+        return NextResponse.json({ error: error.message }, { status: error.status });
+      }
+      console.error("Unexpected error from Gemini TTS:", error);
+      return NextResponse.json(
+        { error: "Something unexpected happened. Please try again." },
+        { status: 500 },
+      );
+    }
+  }
+
   try {
     let res: Response | undefined;
     for (const attempt of attempts) {
-      res = await synthesize(apiKey, attempt);
+      res = await synthesize(apiKey!, attempt);
       if (res.ok) break;
       // A bad key or an exhausted quota won't improve with another model.
       if (res.status === 401 || res.status === 429) break;

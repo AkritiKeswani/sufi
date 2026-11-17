@@ -33,8 +33,8 @@ export default function Home() {
 
       <section className="flex w-full max-w-4xl flex-1 flex-col justify-center py-12">
         <div className="ornament mx-auto w-24" />
-        <h1 className="verse mt-8 text-center text-6xl sm:text-7xl">Sufi</h1>
-        <p className="mx-auto mt-4 text-center text-xs tracking-[0.35em] text-primary uppercase">
+        <h1 className="wordmark mt-8 text-center text-7xl sm:text-8xl">Sufi</h1>
+        <p className="label mx-auto mt-4 text-center text-primary">
           Learn the art of shayari
         </p>
 
@@ -48,13 +48,13 @@ export default function Home() {
               <span dir="rtl" lang="ur" className="verse-urdu text-4xl">
                 {door.urdu}
               </span>
-              <span className="mt-6 text-xs tracking-[0.35em] text-primary uppercase">
+              <span className="display mt-6 text-xl text-primary">
                 {door.title}
               </span>
               <span className="meaning mt-3 flex-1 text-xl leading-snug">
                 {door.blurb}
               </span>
-              <span className="mt-8 flex items-center justify-between text-xs tracking-[0.2em] text-muted-foreground uppercase">
+              <span className="label mt-8 flex items-center justify-between text-muted-foreground">
                 {door.count}
                 <ArrowRight className="size-4 text-primary transition-transform group-hover:translate-x-1" />
               </span>

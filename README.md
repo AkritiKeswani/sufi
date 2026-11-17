@@ -30,6 +30,7 @@ Open http://localhost:3000.
 | `ANTHROPIC_API_KEY` | yes | "Reveal meaning" — [console.anthropic.com](https://console.anthropic.com/settings/keys) |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | yes | Authentication — [dashboard.clerk.com](https://dashboard.clerk.com) |
 | `CLERK_SECRET_KEY` | yes | Authentication (server) |
+| `GEMINI_TTS_VOICE_ID` | optional | Recite in your own voice: the name (or `voice_...` id) of a voice designed or replicated in Google AI Studio (same project as `GEMINI_API_KEY`). Takes over from ElevenLabs when set |
 | `ELEVENLABS_API_KEY` | optional | Audio recitation — [elevenlabs.io](https://elevenlabs.io/app/settings/api-keys) |
 | `ELEVENLABS_VOICE_ID` | optional | Recitation voice (defaults to a free premade voice; Voice Library voices need a paid plan) |
 

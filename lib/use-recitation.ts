@@ -16,6 +16,8 @@ export type Fallback = { text: string; lang: string };
 export function useRecitation() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cache = useRef<Map<string, string>>(new Map());
+  // Requests already on their way, so a prefetch and a tap share one fetch.
+  const inflight = useRef<Map<string, Promise<string>>>(new Map());
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [error, setError] = useState<{ key: string; message: string } | null>(
@@ -34,6 +36,39 @@ export function useRecitation() {
 
   useEffect(() => stop, [stop]);
 
+  const load = useCallback((key: string, request: ReciteRequest) => {
+    const cached = cache.current.get(key);
+    if (cached) return Promise.resolve(cached);
+    let pending = inflight.current.get(key);
+    if (!pending) {
+      pending = (async () => {
+        const res = await fetch("/api/recite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(request),
+        });
+        const data = (await res.json()) as { audio?: string; error?: string };
+        if (!res.ok || !data.audio) {
+          throw new Error(data.error ?? "Unable to recite this.");
+        }
+        cache.current.set(key, data.audio);
+        return data.audio;
+      })().finally(() => inflight.current.delete(key));
+      inflight.current.set(key, pending);
+    }
+    return pending;
+  }, []);
+
+  // Start generating audio before it's asked for, so play feels instant.
+  const prefetch = useCallback(
+    (key: string, request: ReciteRequest) => {
+      load(key, request).catch(() => {
+        /* a real tap will retry and show the error */
+      });
+    },
+    [load],
+  );
+
   const toggle = useCallback(
     async (key: string, request: ReciteRequest, fallback?: Fallback) => {
       setError(null);
@@ -44,21 +79,8 @@ export function useRecitation() {
       stop();
 
       try {
-        let url = cache.current.get(key);
-        if (!url) {
-          setLoadingKey(key);
-          const res = await fetch("/api/recite", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(request),
-          });
-          const data = (await res.json()) as { audio?: string; error?: string };
-          if (!res.ok || !data.audio) {
-            throw new Error(data.error ?? "Unable to recite this.");
-          }
-          url = data.audio;
-          cache.current.set(key, url);
-        }
+        if (!cache.current.has(key)) setLoadingKey(key);
+        const url = await load(key, request);
         const audio = audioRef.current ?? new Audio();
         audioRef.current = audio;
         audio.src = url;
@@ -87,8 +109,8 @@ export function useRecitation() {
         setLoadingKey(null);
       }
     },
-    [activeKey, stop],
+    [activeKey, stop, load],
   );
 
-  return { activeKey, loadingKey, error, toggle, stop };
+  return { activeKey, loadingKey, error, toggle, stop, prefetch };
 }

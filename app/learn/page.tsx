@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Volume2 } from "lucide-react";
+import { FavoriteButton } from "@/components/favorite-button";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { WORDS, type Word } from "@/lib/words";
@@ -56,8 +57,8 @@ export default function Learn() {
         <SiteHeader current="/learn" />
 
         <div className="mt-12 text-center">
-          <h1 className="verse text-4xl sm:text-5xl">Become a Shayar</h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+          <h1 className="display text-4xl text-primary sm:text-5xl">Become a Shayar</h1>
+          <p className="mx-auto mt-4 max-w-md text-xl leading-relaxed text-muted-foreground">
             The words shayari is made of. Tap the speaker, listen, then say
             it aloud.
           </p>
@@ -78,14 +79,17 @@ export default function Learn() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="verse text-3xl">{word.translit}</p>
+                    <p className="display text-2xl">{word.translit}</p>
                     {word.urdu && (
                       <p dir="rtl" lang="ur" className="verse-urdu text-left text-2xl">
                         {word.urdu}
                       </p>
                     )}
                   </div>
-                  {speakButton(word, "word", true)}
+                  <div className="flex shrink-0 items-center gap-2">
+                    <FavoriteButton kind="word" id={word.id} label={`“${word.translit}”`} size="sm" />
+                    {speakButton(word, "word", true)}
+                  </div>
                 </div>
 
                 <p className="mt-3 text-base text-foreground">{word.meaning}</p>
@@ -99,7 +103,7 @@ export default function Learn() {
                   <div className="mt-5 flex flex-1 items-start gap-3 border-t border-border pt-4">
                     {speakButton(word, "example")}
                     <div className="min-w-0 flex-1">
-                      <p className="translit text-base">{word.example.translit}</p>
+                      <p className="roman text-base">{word.example.translit}</p>
                       {word.example.urdu && (
                         <p dir="rtl" lang="ur" className="verse-urdu text-left text-base">
                           {word.example.urdu}

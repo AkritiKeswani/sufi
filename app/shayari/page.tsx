@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BookOpen, ChevronDown, Loader2, Pause, Play } from "lucide-react";
+import { FavoriteButton } from "@/components/favorite-button";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { POEMS, type Poem } from "@/lib/poems";
@@ -15,11 +16,24 @@ const paragraphs = (s: string) =>
     .map((p) => p.trim())
     .filter(Boolean);
 
+function shuffle<T>(items: T[]): T[] {
+  const a = [...items];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // A full-screen feed: one verse per screen, snap-scrolling like a reel.
 export default function Shayari() {
-  const { activeKey, loadingKey, error, toggle, stop } = useRecitation();
+  const { activeKey, loadingKey, error, toggle, stop, prefetch } = useRecitation();
   const feedRef = useRef<HTMLDivElement | null>(null);
   const [current, setCurrent] = useState(0);
+  // A fresh order on every visit. Shuffled after mount (not during render) so
+  // the server-rendered page and the browser agree.
+  const [order, setOrder] = useState<Poem[] | null>(null);
+  useEffect(() => setOrder(shuffle(POEMS)), []);
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [readings, setReadings] = useState<Record<string, Reading>>({});
 
@@ -39,11 +53,16 @@ export default function Shayari() {
     );
     feed.querySelectorAll("[data-index]").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [order]);
 
+  // Moving on stops the last recitation and quietly prepares this one (and
+  // the next), so pressing play doesn't wait on the voice.
   useEffect(() => {
     stop();
-  }, [current, stop]);
+    for (const poem of order?.slice(current, current + 2) ?? []) {
+      prefetch(poem.id, { id: poem.id });
+    }
+  }, [current, order, stop, prefetch]);
 
   async function toggleMeaning(poem: Poem) {
     const willOpen = !open[poem.id];
@@ -97,7 +116,7 @@ export default function Shayari() {
         ref={feedRef}
         className="feed h-svh snap-y snap-mandatory overflow-y-scroll"
       >
-        {POEMS.map((poem, i) => {
+        {(order ?? []).map((poem, i) => {
           const playing = activeKey === poem.id;
           const loading = loadingKey === poem.id;
           const reading = readings[poem.id];
@@ -137,13 +156,7 @@ export default function Shayari() {
                   {poem.text}
                 </blockquote>
 
-                {poem.translation && (
-                  <p className="mt-6 max-w-xl text-center text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
-                    {poem.translation}
-                  </p>
-                )}
-
-                <p className="mt-7 text-center text-xs tracking-[0.35em] text-primary uppercase">
+                <p className="label mt-7 text-center text-primary">
                   — {poem.author}
                 </p>
 
@@ -173,6 +186,7 @@ export default function Shayari() {
                     <BookOpen className="size-4" />
                     {open[poem.id] ? "Hide meaning" : "Meaning"}
                   </Button>
+                  <FavoriteButton kind="shayari" id={poem.id} label={`this verse by ${poem.author}`} />
                 </div>
 
                 {error?.key === poem.id && (
@@ -184,19 +198,25 @@ export default function Shayari() {
                   </p>
                 )}
 
-                {open[poem.id] && reading && (
+                {open[poem.id] && (
                   <div className="animate-fade-up mt-7 max-w-xl">
-                    {reading.loading && (
+                    {/* The English rendering first, then a short reading. */}
+                    {poem.translation && (
+                      <p className="mb-5 text-center text-base leading-relaxed whitespace-pre-line text-foreground">
+                        {poem.translation}
+                      </p>
+                    )}
+                    {reading?.loading && (
                       <p className="shimmer text-center text-xs tracking-[0.2em] text-muted-foreground uppercase">
                         Listening for the meaning
                       </p>
                     )}
-                    {reading.error && (
+                    {reading?.error && (
                       <p className="text-center text-sm text-[#e7a98f] italic">
-                        {reading.error}
+                        {reading?.error}
                       </p>
                     )}
-                    {reading.text && (
+                    {reading?.text && (
                       <div className="meaning text-center text-lg">
                         {reading.text.map((para, j) => (
                           <p key={j}>{para}</p>
@@ -211,7 +231,7 @@ export default function Shayari() {
         })}
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex flex-col items-center gap-1 text-[11px] tracking-[0.25em] text-muted-foreground uppercase">
+      <div className="label pointer-events-none absolute inset-x-0 bottom-4 z-20 flex flex-col items-center gap-1 text-primary">
         <span>
           {current + 1} / {POEMS.length}
         </span>
