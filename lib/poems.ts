@@ -252,6 +252,97 @@ export const POEMS: Poem[] = [
     lang: "ur",
   },
 
+  {
+    id: "ghalib-visaal",
+    urdu: "یہ نہ تھی ہماری قسمت کہ وصالِ یار ہوتا\nاگر اور جیتے رہتے یہی انتظار ہوتا",
+    text: "ye na thi hamari qismat ki visaal-e-yaar hota\nagar aur jiite rahte yahi intizaar hota",
+    translation:
+      "It was never my fate to be united with my love;\nhad I lived longer, it would only have been more waiting.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-aatish",
+    urdu: "عشق پر زور نہیں ہے یہ وہ آتش غالبؔ\nکہ لگائے نہ لگے اور بجھائے نہ بنے",
+    text: "ishq par zor nahin hai ye vo aatish 'ghalib'\nki lagaaye na lage aur bujhaaye na bane",
+    translation:
+      "Love can't be forced, Ghalib; it is a fire\nthat won't light when you try, and won't go out when you want.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-dil-hi-to-hai",
+    urdu: "دل ہی تو ہے نہ سنگ و خشت درد سے بھر نہ آئے کیوں\nروئیں گے ہم ہزار بار کوئی ہمیں ستائے کیوں",
+    text: "dil hi to hai na sang-o-khisht dard se bhar na aaye kyun\nroyenge ham hazaar baar koi hamen sataaye kyun",
+    translation:
+      "It is a heart, not stone or brick; why wouldn't it fill with pain?\nI will weep a thousand times; why must anyone torment me?",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "ghalib-ummeed",
+    urdu: "کوئی امید بر نہیں آتی\nکوئی صورت نظر نہیں آتی",
+    text: "koi ummeed bar nahin aati\nkoi surat nazar nahin aati",
+    translation:
+      "No hope comes true;\nno way forward comes into sight.",
+    author: "Mirza Ghalib",
+    lang: "ur",
+  },
+  {
+    id: "mir-bekhud",
+    urdu: "دکھائی دیے یوں کہ بے خود کیا\nہمیں آپ سے بھی جدا کر چلے",
+    text: "dikhai diye yun ki be-khud kiya\nhamen aap se bhi juda kar chale",
+    translation:
+      "You appeared in such a way that I lost myself;\nyou left me parted even from my own self.",
+    author: "Mir Taqi Mir",
+    lang: "ur",
+  },
+  {
+    id: "dard-toofan",
+    urdu: "زندگی ہے یا کوئی طوفان ہے\nہم تو اس جینے کے ہاتھوں مر چلے",
+    text: "zindagi hai ya koi toofan hai\nham to is jiine ke haathon mar chale",
+    translation:
+      "Is this a life or a storm?\nThis living has all but killed me.",
+    author: "Khwaja Mir Dard",
+    lang: "ur",
+  },
+  {
+    id: "zafar-do-gaz",
+    urdu: "کتنا ہے بد نصیب ظفرؔ دفن کے لیے\nدو گز زمین بھی نہ ملی کوئے یار میں",
+    text: "kitna hai bad-naseeb 'zafar' dafn ke liye\ndo gaz zameen bhi na mili ku-e-yaar mein",
+    translation:
+      "How unlucky Zafar is: for his burial\nhe couldn't find even two yards of earth in his beloved's lane.",
+    author: "Bahadur Shah Zafar",
+    lang: "ur",
+  },
+  {
+    id: "zauq-chain",
+    urdu: "اب تو گھبرا کے یہ کہتے ہیں کہ مر جائیں گے\nمر کے بھی چین نہ پایا تو کدھر جائیں گے",
+    text: "ab to ghabra ke ye kahte hain ki mar jaayenge\nmar ke bhi chain na paaya to kidhar jaayenge",
+    translation:
+      "In despair now I say I will die;\nbut if I find no peace even in death, where will I go?",
+    author: "Sheikh Ibrahim Zauq",
+    lang: "ur",
+  },
+  {
+    id: "dagh-urdu",
+    urdu: "نہیں کھیل اے داغؔ یاروں سے کہہ دو\nکہ آتی ہے اردو زباں آتے آتے",
+    text: "nahin khel ai 'dagh' yaaron se kah do\nki aati hai urdu zabaan aate aate",
+    translation:
+      "Tell your friends, Dagh, it is no game;\nthe Urdu tongue comes slowly, little by little.",
+    author: "Dagh Dehlvi",
+    lang: "ur",
+  },
+  {
+    id: "iqbal-dua",
+    urdu: "لب پہ آتی ہے دعا بن کے تمنا میری\nزندگی شمع کی صورت ہو خدایا میری",
+    text: "lab pe aati hai dua ban ke tamanna meri\nzindagi shama ki surat ho khudaya meri",
+    translation:
+      "My longing rises to my lips as a prayer:\nO God, let my life be like a candle.",
+    author: "Allama Iqbal",
+    lang: "ur",
+  },
+
   // ── Javed Akhtar ───────────────────────────────────────────────────────
   {
     id: "javed-imarat",
