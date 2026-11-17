@@ -27,7 +27,9 @@ async function db(path: string, init: RequestInit & { prefer?: string } = {}) {
     console.error("Supabase error:", res.status, detail);
     throw new Error(`Supabase ${res.status}`);
   }
-  return res.status === 204 ? null : res.json();
+  // Writes with "return=minimal" come back with an empty body.
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 const enc = encodeURIComponent;
